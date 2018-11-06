@@ -88,6 +88,7 @@ public class Tele extends LinearOpMode
             GoFrontward();
         else
             GoBackward();
+        speed = tmp;
     }
 
     private void ControlEngine()
