@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class Tele extends LinearOpMode
@@ -16,6 +17,7 @@ public class Tele extends LinearOpMode
     {
         motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
         motorRight = hardwareMap.get(DcMotor.class, "motorRight");
+        motorRight.setDirection(DcMotorSimple.Direction.REVERSE);
         telemetry.addData("Status", "Initialised");
         telemetry.update();
         waitForStart();
@@ -24,25 +26,25 @@ public class Tele extends LinearOpMode
     private void GoBackward()
     {
         motorLeft.setPower(-speed);
-        motorRight.setPower(speed);
+        motorRight.setPower(-speed);
     }
 
     private void GoFrontward()
     {
         motorLeft.setPower(speed);
-        motorRight.setPower(-speed);
+        motorRight.setPower(speed);
     }
 
     private void GoRight()
     {
         motorLeft.setPower(speed);
-        motorRight.setPower(-speed / 2);
+        motorRight.setPower(speed / 4);
     }
 
     private void GoLeft()
     {
-        motorRight.setPower(-speed);
-        motorLeft.setPower(speed / 2);
+        motorRight.setPower(speed);
+        motorLeft.setPower(speed / 4);
     }
 
     private void ControlSpeed()
@@ -78,16 +80,7 @@ public class Tele extends LinearOpMode
         double x = gamepad1.left_stick_x;
         double y = -gamepad1.left_stick_y;
         double tmp = speed;
-        speed = maxSpeed * x;
-        if(x > 0)
-            GoRight();
-        else
-            GoLeft();
-        speed = maxSpeed * y;
-        if(y > 0)
-            GoFrontward();
-        else
-            GoBackward();
+        
         speed = tmp;
     }
 
