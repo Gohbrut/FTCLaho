@@ -2,59 +2,33 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 @TeleOp
 public class Tele extends LinearOpMode
 {
-    DcMotor motorLeft, motorRight;
-    double speed = 0.5;
-    double minSpeed = 0.1, maxSpeed = 1.0;
-    double speedStep = 0.1;
-    {
+    private Controls controls;
+    double positionServoStep = 0.05;
+    double speedEngine = 0.5;
+    double minEngineSpeed = 0.1, maxEngineSpeed = 1.0;
+    double speedEngineStep = 0.1;
     public boolean pressedX = false, pressedY = false;
 
     private void setup()
-        motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
-        motorLeft.setDirection((DcMotorSimple.Direction.REVERSE));
+    {
+        hardwareMap.get("");
+        controls = new Controls();
         telemetry.addData("Status", "Initialised");
         telemetry.update();
         waitForStart();
     }
 
-    private void GoBackward()
-    {
-        motorLeft.setPower(-speed);
-        motorRight.setPower(-speed);
-    }
-
-    private void GoFrontward()
-    {
-        motorLeft.setPower(speed);
-        motorRight.setPower(speed);
-    }
-
-    private void GoRight()
-    {
-        motorLeft.setPower(speed);
-        motorRight.setPower(-speed);
-    }
-
-    private void GoLeft()
-    {
-        motorRight.setPower(speed);
-        motorLeft.setPower(-speed);
-    }
-
-    private void ControlSpeed()
+    private void ControlEngineSpeed()
     {
         if(gamepad1.x)
         {
-            if(!pressedX && speed > minSpeed)
+            if(!pressedX && speedEngine > minEngineSpeed)
             {
-                speed -= speedStep;
+                speedEngine -= speedEngineStep;
                 pressedX = true;
             }
         }
@@ -64,9 +38,9 @@ public class Tele extends LinearOpMode
         }
         if(gamepad1.y)
         {
-            if(!pressedY && speed < maxSpeed)
+            if(!pressedY && speedEngine < maxEngineSpeed)
             {
-                speed += speedStep;
+                speedEngine += speedEngineStep;
                 pressedY = true;
             }
         }
@@ -80,39 +54,35 @@ public class Tele extends LinearOpMode
     {
         if(gamepad1.dpad_up && gamepad1.dpad_right)
         {
-            motorLeft.setPower(speed);
-            motorRight.setPower(speed / 2);
+            controls.GoFrontwordRight(speedEngine);
         }
         else if(gamepad1.dpad_right && gamepad1.dpad_down)
         {
-            motorLeft.setPower(-speed);
-            motorRight.setPower(-speed / 2);
+            controls.GoBackwardRight(speedEngine);
         }
         else if(gamepad1.dpad_down && gamepad1.dpad_left)
         {
-            motorLeft.setPower(-speed / 2);
-            motorRight.setPower(-speed);
+            controls.GoBackwardLeft(speedEngine);
         }
         else if(gamepad1.dpad_left && gamepad1.dpad_up)
         {
-            motorLeft.setPower(speed / 3);
-            motorRight.setPower(speed);
+            controls.GoFrontwardLeft(speedEngine);
         }
         else if(gamepad1.dpad_up)
         {
-            GoFrontward();
+            controls.GoFrontward(speedEngine);
         }
         else if(gamepad1.dpad_down)
         {
-            GoBackward();
+            controls.GoBackward(speedEngine);
         }
         else if(gamepad1.dpad_right)
         {
-            GoRight();
+            controls.GoRight(speedEngine);
         }
         else if(gamepad1.dpad_left)
         {
-            GoLeft();
+            controls.GoLeft(speedEngine);
         }
     }
 
@@ -123,7 +93,7 @@ public class Tele extends LinearOpMode
 
         double speedLeft = y;
         double speedRight = y;
-        motorLeft.setPower(speedLeft);
+        /* motorLeft.setPower(speedLeft);
         motorRight.setPower(speedRight);
         if(x >= 0 && y >= 0)
         {
@@ -144,30 +114,23 @@ public class Tele extends LinearOpMode
         {
             motorRight.setPower(y);
             motorLeft.setPower((y + x / 4) / 2);
-        }
+        }*/
     }
 
     private void ControlEngine()
     {
-        motorLeft.setPower(0);
-        motorRight.setPower(0);
-
-        ControlSpeed();
+        controls.ResetEngine();
+        ControlEngineSpeed();
         ControlDpad();
         ControlLeftJoystick();
-        ControlBackButtons();
     }
 
-    private void ControlBackButtons()
+    private void ControlServo()
     {
-        if(gamepad1.right_bumper)
-            motorRight.setPower(-speed);
-        else if(gamepad1.right_trigger != 0)
-            motorRight.setPower(gamepad1.right_trigger);
-        if(gamepad1.left_bumper)
-            motorLeft.setPower(-speed);
-        else if(gamepad1.left_trigger != 0)
-            motorLeft.setPower(gamepad1.left_trigger);
+        if(gamepad1.a)
+            controls.MoveServo(-positionServoStep);
+        else if(gamepad1.b)
+            controls.MoveServo(positionServoStep);
     }
 
     public void runOpMode()
@@ -176,8 +139,9 @@ public class Tele extends LinearOpMode
         while(opModeIsActive())
         {
             ControlEngine();
+            ControlServo();
             telemetry.addData("Status", "Running");
-            telemetry.addData("Speed", speed);
+            telemetry.addData("Speed", speedEngine);
             telemetry.update();
         }
     }
