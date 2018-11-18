@@ -15,8 +15,7 @@ public class Tele extends LinearOpMode
 
     private void setup()
     {
-        hardwareMap.get("");
-        controls = new Controls();
+        controls = new Controls(hardwareMap);
         telemetry.addData("Status", "Initialised");
         telemetry.update();
         waitForStart();
@@ -123,13 +122,18 @@ public class Tele extends LinearOpMode
         ControlEngineSpeed();
         ControlDpad();
         ControlLeftJoystick();
+        Test();
     }
 
-    private void ControlServo()
+    private void Test()
     {
-        if(gamepad1.a)
+        double testMotor = gamepad1.left_stick_y;
+        double baseEngine = gamepad1.right_stick_y;
+        controls.MoveTestEngine(testMotor);
+        controls.MoveBaseEngine(baseEngine);
+        if(gamepad1.left_bumper)
             controls.MoveServo(-positionServoStep);
-        else if(gamepad1.b)
+        else if(gamepad1.right_bumper)
             controls.MoveServo(positionServoStep);
     }
 
@@ -139,7 +143,6 @@ public class Tele extends LinearOpMode
         while(opModeIsActive())
         {
             ControlEngine();
-            ControlServo();
             telemetry.addData("Status", "Running");
             telemetry.addData("Speed", speedEngine);
             telemetry.update();
