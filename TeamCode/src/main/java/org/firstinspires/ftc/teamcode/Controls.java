@@ -3,55 +3,47 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 
 public class Controls
 {
-    DcMotor motorLeft, motorRight, testEngine, baseEngine;
-    Servo testServo;
-    double positionServo;
+    private DcMotor motorLeft, motorRight, baseEngine, armEngine;
+//    private Servo armServo1;
+    private double positionServo;
+
+    public ArmControls armControls;
 
     public Controls(HardwareMap hardwareMap)
     {
-        motorLeft = hardwareMap.get(DcMotor.class, "motorLeft");
-        motorRight = hardwareMap.get(DcMotor.class, "motorRight");
-        testServo = hardwareMap.get(Servo.class, "testServo");
-        testEngine = hardwareMap.get(DcMotor.class, "testMotor");
-        baseEngine = hardwareMap.get(DcMotor.class, "baseMotor");
-        positionServo = testServo.getPosition();
-        motorLeft.setDirection((DcMotorSimple.Direction.REVERSE));
+        setupBase(hardwareMap);
+        setupArm(hardwareMap);
     }
 
     public void MoveBaseEngine(double testSpeed)
     {
-        testEngine.setPower(testSpeed);
+        baseEngine.setPower(testSpeed);
     }
 
-    public void MoveTestEngine(double testSpeed)
-    {
-        testEngine.setPower(testSpeed);
-    }
-
-    public void MoveServo(double speedServo)
-    {
-        if(speedServo >= 0)
-        {
-            if(positionServo - speedServo >= Servo.MIN_POSITION)
-                positionServo -= speedServo;
-        }
-        else
-        {
-            if(positionServo + speedServo <= Servo.MAX_POSITION)
-                positionServo += speedServo;
-        }
-        testServo.setPosition(positionServo);
-    }
+//    public void MoveArm(double speed)
+//    {
+//        if(speed >= 0)
+//        {
+//            if(positionServo - speed >= Servo.MIN_POSITION)
+//                positionServo -= speed;
+//        }
+//        else
+//        {
+//            if(positionServo + speed <= Servo.MAX_POSITION)
+//                positionServo += speed;
+//        }
+////        armServo1.setPosition(positionServo);
+//        armEngine.setPower(speed * 10);
+//    }
 
     public void ResetEngine()
     {
+        armEngine.setPower(0);
         motorLeft.setPower(0);
         motorRight.setPower(0);
-        testEngine.setPower(0);
         baseEngine.setPower(0);
     }
 
@@ -101,5 +93,21 @@ public class Controls
     {
         motorRight.setPower(speedEngine);
         motorLeft.setPower(-speedEngine);
+    }
+
+    // Private class methods
+
+    private void setupBase(HardwareMap hardwareMap) {
+        motorLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_LEFT);
+        motorRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_RIGHT);
+//        armServo1 = hardwareMap.get(Servo.class, "armServo1");
+//        armEngine = hardwareMap.get(DcMotor.class, "armEngine");
+        baseEngine = hardwareMap.get(DcMotor.class, Constants.BASE_MOTOR);
+//        positionServo = armServo1.getPosition();
+        motorLeft.setDirection((DcMotorSimple.Direction.REVERSE));
+    }
+
+    private void setupArm(HardwareMap hardwareMap) {
+        armControls = new ArmControls(hardwareMap);
     }
 }

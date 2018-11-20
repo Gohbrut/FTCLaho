@@ -127,14 +127,13 @@ public class Tele extends LinearOpMode
 
     private void Test()
     {
-        double testMotor = gamepad1.left_stick_y;
         double baseEngine = gamepad1.right_stick_y;
-        controls.MoveTestEngine(testMotor);
         controls.MoveBaseEngine(baseEngine);
+
         if(gamepad1.left_bumper)
-            controls.MoveServo(-positionServoStep);
+            controls.armControls.rotateLowerArm(-positionServoStep, true);
         else if(gamepad1.right_bumper)
-            controls.MoveServo(positionServoStep);
+            controls.armControls.rotateLowerArm(positionServoStep, true);
     }
 
     public void runOpMode()
