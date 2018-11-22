@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp
+import org.firstinspires.ftc.teamcode.controls.Controls;
+
+@TeleOp(name = "Manualcop")
 public class Tele extends LinearOpMode
 {
     private Controls controls;

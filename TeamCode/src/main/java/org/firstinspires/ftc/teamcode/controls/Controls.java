@@ -1,19 +1,24 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.controls;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.utils.Constants;
 
 public class Controls
 {
     private DcMotor motorLeft, motorRight, baseEngine, armEngine;
-//    private Servo armServo1;
+    private Servo armServo1;
     private double positionServo;
 
     public ArmControls armControls;
+    public SensorControls sensorControls;
 
     public Controls(HardwareMap hardwareMap)
     {
+        sensorControls = new SensorControls(hardwareMap);
         setupBase(hardwareMap);
         setupArm(hardwareMap);
     }
@@ -22,22 +27,6 @@ public class Controls
     {
         baseEngine.setPower(testSpeed);
     }
-
-//    public void MoveArm(double speed)
-//    {
-//        if(speed >= 0)
-//        {
-//            if(positionServo - speed >= Servo.MIN_POSITION)
-//                positionServo -= speed;
-//        }
-//        else
-//        {
-//            if(positionServo + speed <= Servo.MAX_POSITION)
-//                positionServo += speed;
-//        }
-////        armServo1.setPosition(positionServo);
-//        armEngine.setPower(speed * 10);
-//    }
 
     public void ResetEngine()
     {
@@ -95,16 +84,14 @@ public class Controls
         motorLeft.setPower(-speedEngine);
     }
 
-    // Private class methods
-
     private void setupBase(HardwareMap hardwareMap) {
         motorLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_LEFT);
         motorRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_RIGHT);
-//        armServo1 = hardwareMap.get(Servo.class, "armServo1");
-//        armEngine = hardwareMap.get(DcMotor.class, "armEngine");
-        baseEngine = hardwareMap.get(DcMotor.class, Constants.BASE_MOTOR);
-//        positionServo = armServo1.getPosition();
-        motorLeft.setDirection((DcMotorSimple.Direction.REVERSE));
+        armServo1 = hardwareMap.get(Servo.class, "armServo1");
+        armEngine = hardwareMap.get(DcMotor.class, "armEngine");
+        baseEngine = hardwareMap.get(DcMotor.class, Constants.MOTOR_BASE);
+        positionServo = armServo1.getPosition();
+        motorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private void setupArm(HardwareMap hardwareMap) {

@@ -1,18 +1,20 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.controls;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.utils.Constants;
 
 public class ArmControls {
 
 //    private DcMotor motor1;
 
-    private Servo lowerArm;
-    private Servo upperArm;
+    private Servo servoLowerArm;
+    private Servo servoUpperArm;
 
     public ArmControls(HardwareMap hardwareMap) {
-        this.lowerArm = hardwareMap.get(Servo.class, Constants.LOWER_ARM);
-        this.upperArm = hardwareMap.get(Servo.class, Constants.UPPER_ARM);
+        this.servoLowerArm = hardwareMap.get(Servo.class, Constants.SERVO_LOWER_ARM);
+        this.servoUpperArm = hardwareMap.get(Servo.class, Constants.SERVO_UPPER_ARM);
     }
 
     /**
@@ -25,8 +27,8 @@ public class ArmControls {
         if (position > Servo.MAX_POSITION || position < Servo.MIN_POSITION)
             return false;
 
-        lowerArm.setDirection(forward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
-        lowerArm.setPosition(position);
+        servoLowerArm.setDirection(forward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
+        servoLowerArm.setPosition(position);
 
         return true;
     }
@@ -41,8 +43,8 @@ public class ArmControls {
         if (position > Servo.MAX_POSITION || position < Servo.MIN_POSITION)
             return false;
 
-        upperArm.setDirection(forward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
-        upperArm.setPosition(position);
+        servoUpperArm.setDirection(forward ? Servo.Direction.FORWARD : Servo.Direction.REVERSE);
+        servoUpperArm.setPosition(position);
 
         return true;
     }
