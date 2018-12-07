@@ -9,92 +9,79 @@ import org.firstinspires.ftc.teamcode.utils.Constants;
 
 public class Controls
 {
-    private DcMotor motorLeft, motorRight, baseEngine, armEngine;
-    private Servo armServo1;
-    private double positionServo;
+    private DcMotor motorUpLeft, motorUpRight, motorDownLeft,  motorDownRight;
 
     public ArmControls armControls;
+    public PickupControls pickupControls;
     public SensorControls sensorControls;
 
     public Controls(HardwareMap hardwareMap)
     {
-        sensorControls = new SensorControls(hardwareMap);
-        setupBase(hardwareMap);
-        setupArm(hardwareMap);
-    }
-
-    public void MoveBaseEngine(double testSpeed)
-    {
-        baseEngine.setPower(testSpeed);
+        motorDownRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_DOWN_RIGHT);
+        motorDownLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_DOWN_LEFT);
+        motorUpRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_UP_RIGHT);
+        motorUpLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_UP_LEFT);
+        motorUpLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        motorDownLeft.setDirection(DcMotorSimple.Direction.REVERSE);
+        pickupControls = new PickupControls(hardwareMap);
+        //sensorControls = new SensorControls(hardwareMap);
+        //armControls = new ArmControls(hardwareMap);
     }
 
     public void ResetEngine()
     {
-        armEngine.setPower(0);
-        motorLeft.setPower(0);
-        motorRight.setPower(0);
-        baseEngine.setPower(0);
+        pickupControls.reset();
+        motorUpLeft.setPower(0);
+        motorUpRight.setPower(0);
+        motorDownLeft.setPower(0);
+        motorDownRight.setPower(0);
     }
 
     public void GoBackwardLeft(double speedEngine)
     {
-        motorLeft.setPower(-speedEngine / 2);
-        motorRight.setPower(-speedEngine);
+        motorUpLeft.setPower(-speedEngine);
+        motorUpRight.setPower(-speedEngine);
     }
 
     public void GoBackwardRight(double speedEngine)
     {
-        motorLeft.setPower(-speedEngine);
-        motorRight.setPower(-speedEngine / 2);
+        motorDownLeft.setPower(-speedEngine);
+        motorUpRight.setPower(-speedEngine);
     }
 
     public void GoFrontwardLeft(double speedEngine)
     {
-        motorLeft.setPower(speedEngine / 3);
-        motorRight.setPower(speedEngine);
+        motorDownLeft.setPower(speedEngine);
+        motorUpRight.setPower(speedEngine);
     }
 
     public void GoFrontwordRight(double speedEngine)
     {
-        motorLeft.setPower(speedEngine);
-        motorRight.setPower(speedEngine / 2);
+        motorUpLeft.setPower(speedEngine);
+        motorDownRight.setPower(speedEngine);
     }
 
     public void GoBackward(double speedEngine)
     {
-        motorLeft.setPower(-speedEngine);
-        motorRight.setPower(-speedEngine);
+        motorDownLeft.setPower(-speedEngine);
+        motorDownRight.setPower(-speedEngine);
     }
 
     public void GoFrontward(double speedEngine)
     {
-        motorLeft.setPower(speedEngine);
-        motorRight.setPower(speedEngine);
+        motorUpLeft.setPower(speedEngine);
+        motorUpRight.setPower(speedEngine);
     }
 
     public void GoRight(double speedEngine)
     {
-        motorLeft.setPower(speedEngine);
-        motorRight.setPower(-speedEngine);
+        motorDownRight.setPower(speedEngine);
+        motorUpRight.setPower(speedEngine);
     }
 
     public void GoLeft(double speedEngine)
     {
-        motorRight.setPower(speedEngine);
-        motorLeft.setPower(-speedEngine);
-    }
-
-    private void setupBase(HardwareMap hardwareMap) {
-        motorLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_LEFT);
-        motorRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_RIGHT);
-        armServo1 = hardwareMap.get(Servo.class, "armServo1");
-        armEngine = hardwareMap.get(DcMotor.class, "armEngine");
-        baseEngine = hardwareMap.get(DcMotor.class, Constants.MOTOR_BASE);
-        positionServo = armServo1.getPosition();
-        motorLeft.setDirection(DcMotorSimple.Direction.REVERSE);
-    }
-
-    private void setupArm(HardwareMap hardwareMap) {
-        armControls = new ArmControls(hardwareMap);
+        motorDownLeft.setPower(speedEngine);
+        motorUpLeft.setPower(-speedEngine);
     }
 }

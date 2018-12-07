@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.controls.Controls;
 public class Tele extends LinearOpMode
 {
     private Controls controls;
-    double positionServoStep = 0.05;
     double speedEngine = 0.5;
     double minEngineSpeed = 0.1, maxEngineSpeed = 1.0;
     double speedEngineStep = 0.1;
@@ -87,35 +86,12 @@ public class Tele extends LinearOpMode
         }
     }
 
-    private void ControlLeftJoystick()
+    private void ControlPickup()
     {
-        double x = gamepad1.left_stick_x;
-        double y = -gamepad1.left_stick_y;
-
-        double speedLeft = y;
-        double speedRight = y;
-        /* motorLeft.setPower(speedLeft);
-        motorRight.setPower(speedRight);
-        if(x >= 0 && y >= 0)
-        {
-            motorLeft.setPower(y);
-            motorRight.setPower((y + x / 4) / 2);
-        }
-        else if(x >= 0 && y < 0)
-        {
-            motorLeft.setPower(y);
-            motorRight.setPower((y + x / 4) / 2);
-        }
-        else if(x < 0 && y < 0)
-        {
-            motorRight.setPower(y);
-            motorLeft.setPower((y + x / 4) / 2);
-        }
-        else if(x < 0 && y >= 0)
-        {
-            motorRight.setPower(y);
-            motorLeft.setPower((y + x / 4) / 2);
-        }*/
+        if(gamepad1.left_bumper)
+            controls.pickupControls.goDown(speedEngine);
+        else if(gamepad1.right_bumper)
+            controls.pickupControls.goUp(speedEngine);
     }
 
     private void ControlEngine()
@@ -123,19 +99,6 @@ public class Tele extends LinearOpMode
         controls.ResetEngine();
         ControlEngineSpeed();
         ControlDpad();
-        ControlLeftJoystick();
-        Test();
-    }
-
-    private void Test()
-    {
-        double baseEngine = gamepad1.right_stick_y;
-        controls.MoveBaseEngine(baseEngine);
-
-        if(gamepad1.left_bumper)
-            controls.armControls.rotateLowerArm(-positionServoStep, true);
-        else if(gamepad1.right_bumper)
-            controls.armControls.rotateLowerArm(positionServoStep, true);
     }
 
     public void runOpMode()
@@ -144,6 +107,7 @@ public class Tele extends LinearOpMode
         while(opModeIsActive())
         {
             ControlEngine();
+            ControlPickup();
             telemetry.addData("Status", "Running");
             telemetry.addData("Speed", speedEngine);
             telemetry.update();

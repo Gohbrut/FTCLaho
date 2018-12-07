@@ -22,11 +22,11 @@ public class SensorControls
 
     public SensorControls(HardwareMap hardwareMap)
     {
-        distanceSensor = hardwareMap.get(DistanceSensor.class, Constants.SENSOR_DISTANCE);
-        colorSensor = hardwareMap.get(ColorSensor.class, Constants.SENSOR_COLOR);
+        //distanceSensor = hardwareMap.get(DistanceSensor.class, Constants.SENSOR_DISTANCE);
+        //colorSensor = hardwareMap.get(ColorSensor.class, Constants.SENSOR_COLOR);
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.mode = BNO055IMU.SensorMode.IMU;
-        imuSensor = hardwareMap.get(BNO055IMU.class, Constants.SENSOR_IMU);
+        //imuSensor = hardwareMap.get(BNO055IMU.class, Constants.SENSOR_IMU);
         imuSensor.initialize(parameters);
     }
 
