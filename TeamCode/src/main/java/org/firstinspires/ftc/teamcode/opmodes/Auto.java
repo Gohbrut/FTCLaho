@@ -27,12 +27,18 @@ public class Auto extends LinearOpMode
 
     private void land()
     {
-
+        controls.ResetEngine();
+        controls.GoDown(0.5);
+        sleep(500);
+        controls.GoLeft(0.5);
+        sleep(500);
     }
 
     private void setup()
     {
         controls = new Controls(hardwareMap);
+        controls.GoUp(1);
+        waitForStart();
     }
 
     public void runOpMode()

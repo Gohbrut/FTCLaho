@@ -89,9 +89,17 @@ public class Tele extends LinearOpMode
     private void ControlPickup()
     {
         if(gamepad1.left_bumper)
-            controls.pickupControls.goDown(speedEngine);
+            controls.GoDown(speedEngine);
         else if(gamepad1.right_bumper)
-            controls.pickupControls.goUp(speedEngine);
+            controls.GoUp(speedEngine);
+    }
+
+    private void ControlRotation()
+    {
+        if(gamepad1.a)
+            controls.RotateClockwise(speedEngine);
+        else if(gamepad1.b)
+            controls.RotateCounterClockwise(speedEngine);
     }
 
     private void ControlEngine()
@@ -99,6 +107,7 @@ public class Tele extends LinearOpMode
         controls.ResetEngine();
         ControlEngineSpeed();
         ControlDpad();
+        ControlRotation();
     }
 
     public void runOpMode()
