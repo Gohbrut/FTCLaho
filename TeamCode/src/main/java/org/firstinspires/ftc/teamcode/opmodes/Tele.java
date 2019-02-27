@@ -2,17 +2,16 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.controls.Controls;
+import org.firstinspires.ftc.teamcode.utils.Color;
 
 @TeleOp(name = "Manualcop")
 public class Tele extends LinearOpMode
 {
     private Controls controls;
-    double speedEngine = 0.5;
-    double minEngineSpeed = 0.1, maxEngineSpeed = 1.0;
-    double speedEngineStep = 0.1;
-    public boolean pressedX = false, pressedY = false;
 
     private void setup()
     {
@@ -22,104 +21,200 @@ public class Tele extends LinearOpMode
         waitForStart();
     }
 
-    private void ControlEngineSpeed()
+    private void debug()
     {
-        if(gamepad1.x)
+        //telemetry.addData("Angle: ", (int)controls.getNormalizedAngle());
+        //telemetry.addData("Distance: ", controls.getDistance());
+        //telemetry.addData("Yellow: ", controls.getColor().isYellow());
+        //telemetry.addData("Servo left: ", controls.getCollectorControls().servoLeft.getPosition());
+        //telemetry.addData("Servo right: ", controls.getCollectorControls().servoRight.getPosition());
+        telemetry.addData("Motor: ", controls.pickupControls.motorMove);
+        telemetry.update();
+    }
+
+    private void controlJoystick()
+    {
+        controls.move(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+    }
+
+    private void controlGamepad1()
+    {
+        controlJoystick();
+        controlPickup();
+        rotate();
+    }
+
+    private void controlPickup()
+    {
+        if(controls.pickupControls.motorMove)
+            return;
+        if(gamepad1.right_bumper)
         {
-            if(!pressedX && speedEngine > minEngineSpeed)
+            controls.pickupControls.motorMove = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    controls.pickupControls.goUp(1);
+                    while(gamepad1.right_bumper)
+                        try
+                        {
+                            Thread.sleep(5);
+                        }
+                        catch(InterruptedException e)
+                        {
+
+                        }
+                    controls.pickupControls.goUp(0);
+                    controls.pickupControls.motorMove = false;
+                }
+            }).run();
+        }
+        else if(gamepad1.left_bumper)
+        {
+            controls.pickupControls.motorMove = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    controls.pickupControls.goDown(1);
+                    while(gamepad1.left_bumper)
+                        try
+                        {
+                            Thread.sleep(5);
+                        }
+                        catch(InterruptedException e)
+                        {
+
+                        }
+                    controls.pickupControls.goDown(0);
+                    controls.pickupControls.motorMove = false;
+                }
+            }).run();
+        }
+    }
+
+    private void rotate()
+    {
+        if (gamepad1.right_stick_x > 0.1)
+            controls.rotateClockwise(gamepad1.right_stick_x);
+        else if (gamepad1.right_stick_x < -0.1)
+            controls.rotateClockwise(gamepad1.right_stick_x);
+    }
+
+    private void controlGamepad2()
+    {
+        if(gamepad2.right_trigger > 0.1 && !controls.collectorControls.baseMotorMove)
+        {
+            controls.collectorControls.baseMotorMove = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(gamepad2.right_trigger > 0.1)
+                    {
+                        controls.getCollectorControls().base(gamepad2.right_trigger);
+                        try
+                        {
+                            Thread.sleep(5);
+                        }
+                        catch(InterruptedException e)
+                        {
+
+                        }
+                    }
+                    controls.collectorControls.base(0);
+                    controls.collectorControls.baseMotorMove = false;
+                }
+            }).run();
+        }
+        else if(gamepad2.left_trigger > 0.1 && !controls.collectorControls.baseMotorMove)
+        {
+            controls.collectorControls.baseMotorMove = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while(gamepad2.left_trigger > 0.1)
+                    {
+                        controls.getCollectorControls().base(-gamepad2.left_trigger);
+                        try
+                        {
+                            Thread.sleep(5);
+                        }
+                        catch(InterruptedException e)
+                        {
+
+                        }
+                    }
+                    controls.collectorControls.base(0);
+                    controls.collectorControls.baseMotorMove = false;
+                }
+            }).run();
+        }
+        if(!controls.collectorControls.servoExtenderMove)
+        {
+            if(gamepad2.left_stick_y >= 0.1 && gamepad2.left_stick_y <= -0.1)
             {
-                speedEngine -= speedEngineStep;
-                pressedX = true;
+                controls.collectorControls.servoExtenderMove = true;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while(gamepad2.left_stick_y >= 0.1 && gamepad2.left_stick_y <= -0.1)
+                        {
+                            double temp = 0.5 + gamepad2.left_stick_y / 2;
+                            controls.collectorControls.extend(temp);
+                            try
+                            {
+                                Thread.sleep(5);
+                            }
+                            catch(InterruptedException e)
+                            {
+
+                            }
+                        }
+                        controls.collectorControls.servoExtenderMove = false;
+                    }
+                }).run();
             }
         }
-        else if(pressedX)
+        double extender = 0.5 + gamepad2.left_stick_y / 2;
+        controls.getCollectorControls().extend(extender);
+        controls.getCollectorControls().arm(gamepad2.right_stick_y);
+        if(gamepad2.y)
         {
-            pressedX = false;
-        }
-        if(gamepad1.y)
-        {
-            if(!pressedY && speedEngine < maxEngineSpeed)
+            if(!controls.collectorControls.servoCollectorMove)
             {
-                speedEngine += speedEngineStep;
-                pressedY = true;
+                controls.collectorControls.servoCollectorMove = true;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        controls.collectorControls. collect();
+                        while(gamepad2.y)
+                        {
+                            try
+                            {
+                                Thread.sleep(5);
+                            }
+                            catch(InterruptedException e)
+                            {
+
+                            }
+                        }
+                        controls.collectorControls.resetServos();
+                        controls.collectorControls.servoCollectorMove = false;
+                    }
+                }).run();
             }
         }
-        else if(pressedY)
-        {
-            pressedY = false;
-        }
-    }
-
-    private void ControlDpad()
-    {
-        if(gamepad1.dpad_up && gamepad1.dpad_right)
-        {
-            controls.GoFrontwordRight(speedEngine);
-        }
-        else if(gamepad1.dpad_right && gamepad1.dpad_down)
-        {
-            controls.GoBackwardRight(speedEngine);
-        }
-        else if(gamepad1.dpad_down && gamepad1.dpad_left)
-        {
-            controls.GoBackwardLeft(speedEngine);
-        }
-        else if(gamepad1.dpad_left && gamepad1.dpad_up)
-        {
-            controls.GoFrontwardLeft(speedEngine);
-        }
-        else if(gamepad1.dpad_up)
-        {
-            controls.GoFrontward(speedEngine);
-        }
-        else if(gamepad1.dpad_down)
-        {
-            controls.GoBackward(speedEngine);
-        }
-        else if(gamepad1.dpad_right)
-        {
-            controls.GoRight(speedEngine);
-        }
-        else if(gamepad1.dpad_left)
-        {
-            controls.GoLeft(speedEngine);
-        }
-    }
-
-    private void ControlPickup()
-    {
-        if(gamepad1.left_bumper)
-            controls.GoDown(speedEngine);
-        else if(gamepad1.right_bumper)
-            controls.GoUp(speedEngine);
-    }
-
-    private void ControlRotation()
-    {
-        if(gamepad1.a)
-            controls.RotateClockwise(speedEngine);
-        else if(gamepad1.b)
-            controls.RotateCounterClockwise(speedEngine);
-    }
-
-    private void ControlEngine()
-    {
-        controls.ResetEngine();
-        ControlEngineSpeed();
-        ControlDpad();
-        ControlRotation();
     }
 
     public void runOpMode()
     {
         setup();
+        controls.resetEngine();
         while(opModeIsActive())
         {
-            ControlEngine();
-            ControlPickup();
-            telemetry.addData("Status", "Running");
-            telemetry.addData("Speed", speedEngine);
-            telemetry.update();
+            controls.resetEngine();
+            controlGamepad1();
+            controlGamepad2();
+            debug();
         }
     }
 }

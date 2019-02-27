@@ -3,63 +3,78 @@ package org.firstinspires.ftc.teamcode.controls;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.utils.Defines;
+import org.firstinspires.ftc.teamcode.utils.Utils;
 
-import org.firstinspires.ftc.teamcode.utils.Constants;
+public class Controls {
+    public DcMotor motorUpLeft, motorUpRight, motorDownLeft, motorDownRight;
 
-public class Controls
-{
-    private DcMotor motorUpLeft, motorUpRight, motorDownLeft,  motorDownRight;
-    private PickupControls pickupControls;
+    public PickupControls pickupControls;
     private SensorControls sensorControls;
+    public CollectControls collectorControls;
     private static boolean pickupControlsEnabled = true;
     private static boolean controlsEnabled = true;
-    private static boolean sensorControlsEnabled = false;
+    private static boolean sensorControlsEnabled = true;
+    private static boolean collectorControlsEnabled = true;
 
-    public void GoDown(double speedEngine)
-    {
-        if(pickupControlsEnabled)
-        {
+    public CollectControls getCollectorControls() {
+        return collectorControls;
+    }
+
+    public void goDown(double speedEngine) {
+        if (pickupControlsEnabled) {
             pickupControls.goDown(speedEngine);
         }
     }
 
-    public void GoUp(double speedEngine)
-    {
-        if(pickupControlsEnabled)
-        {
+    public void goUp(double speedEngine) {
+        if (pickupControlsEnabled) {
             pickupControls.goUp(speedEngine);
         }
     }
 
-    public Controls(HardwareMap hardwareMap)
-    {
-        if(controlsEnabled)
-        {
-            motorDownRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_DOWN_RIGHT);
-            motorDownLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_DOWN_LEFT);
-            motorUpRight = hardwareMap.get(DcMotor.class, Constants.MOTOR_UP_RIGHT);
-            motorUpLeft = hardwareMap.get(DcMotor.class, Constants.MOTOR_UP_LEFT);
+    public Controls(HardwareMap hardwareMap) {
+        if (controlsEnabled) {
+            motorDownRight = hardwareMap.get(DcMotor.class, Defines.MOTOR_DOWN_RIGHT);
+            motorDownLeft = hardwareMap.get(DcMotor.class, Defines.MOTOR_DOWN_LEFT);
+            motorUpRight = hardwareMap.get(DcMotor.class, Defines.MOTOR_UP_RIGHT);
+            motorUpLeft = hardwareMap.get(DcMotor.class, Defines.MOTOR_UP_LEFT);
             motorUpLeft.setDirection(DcMotorSimple.Direction.REVERSE);
             motorDownLeft.setDirection(DcMotorSimple.Direction.REVERSE);
         }
 
-        if(pickupControlsEnabled)
-        {
+        if (pickupControlsEnabled) {
             pickupControls = new PickupControls(hardwareMap);
         }
 
-        if(sensorControlsEnabled)
-        {
-            sensorControls = new SensorControls(hardwareMap);
+        if (sensorControlsEnabled) {
+            //sensorControls = new SensorControls(hardwareMap);
+        }
+
+        if (collectorControlsEnabled) {
+            collectorControls = new CollectControls(hardwareMap);
         }
     }
 
-    public void ResetEngine()
+    /**
+     * Moves the robot orthogonally
+     * @param x x axis movement
+     * @param y y axis movement
+     */
+    public void move(double x, double y)
     {
+        motorUpRight.setPower(Utils.Clamp(x - y, -1.0, 1.0));
+        motorDownRight.setPower(Utils.Clamp(x + y, -1.0, 1.0));
+        motorUpLeft.setPower(Utils.Clamp(x + y, -1.0, 1.0));
+        motorDownLeft.setPower(Utils.Clamp(x - y, -1.0, 1.0));
+    }
+
+    public void resetEngine()
+    {
+        pickupControls.reset();
         if(pickupControlsEnabled)
         {
-            pickupControls.reset();
+
         }
 
         if(controlsEnabled)
@@ -69,9 +84,14 @@ public class Controls
             motorDownLeft.setPower(0);
             motorDownRight.setPower(0);
         }
+
+        if(collectorControlsEnabled)
+        {
+            collectorControls.resetEngines();
+        }
     }
 
-    public void RotateCounterClockwise(double speed)
+    public void rotateCounterClockwise(double speed)
     {
         motorUpLeft.setPower(-speed);
         motorUpRight.setPower(speed);
@@ -79,7 +99,7 @@ public class Controls
         motorDownRight.setPower(speed);
     }
 
-    public void RotateClockwise(double speed)
+    public void rotateClockwise(double speed)
     {
         motorUpLeft.setPower(speed);
         motorUpRight.setPower(-speed);
@@ -87,7 +107,7 @@ public class Controls
         motorDownRight.setPower(-speed);
     }
 
-    public void GoBackwardLeft(double speedEngine)
+    public void goBackwardLeft(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -96,7 +116,7 @@ public class Controls
         }
     }
 
-    public void GoBackwardRight(double speedEngine)
+    public void goBackwardRight(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -105,7 +125,7 @@ public class Controls
         }
     }
 
-    public void GoFrontwardLeft(double speedEngine)
+    public void goFrontwardLeft(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -114,7 +134,7 @@ public class Controls
         }
     }
 
-    public void GoFrontwordRight(double speedEngine)
+    public void goFrontwordRight(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -123,7 +143,7 @@ public class Controls
         }
     }
 
-    public void GoBackward(double speedEngine)
+    public void goBackward(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -134,7 +154,7 @@ public class Controls
         }
     }
 
-    public void GoFrontward(double speedEngine)
+    public void goFrontward(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -145,7 +165,7 @@ public class Controls
         }
     }
 
-    public void GoRight(double speedEngine)
+    public void goRight(double speedEngine)
     {
         if(controlsEnabled)
         {
@@ -156,7 +176,7 @@ public class Controls
         }
     }
 
-    public void GoLeft(double speedEngine)
+    public void goLeft(double speedEngine)
     {
         if(controlsEnabled)
         {

@@ -1,31 +1,35 @@
 package org.firstinspires.ftc.teamcode.controls;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.utils.Constants;
+import org.firstinspires.ftc.teamcode.utils.Defines;
 
 public class PickupControls
 {
-    private DcMotor motorPickup;
+    public DcMotor motor;
+    public boolean motorMove;
 
     public PickupControls(HardwareMap hardwareMap)
     {
-        motorPickup = hardwareMap.get(DcMotor.class, Constants.MOTOR_PICKUP);
+        motor = hardwareMap.get(DcMotor.class, Defines.MOTOR_PICKUP);
+        motor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motorMove = false;
     }
 
     public void goUp(double speed)
     {
-        motorPickup.setPower(speed);
+        motor.setPower(speed);
     }
 
     public void goDown(double speed)
     {
-        motorPickup.setPower(-speed);
+        motor.setPower(-speed);
     }
 
     public void reset()
     {
-        motorPickup.setPower(0);
+
     }
 }

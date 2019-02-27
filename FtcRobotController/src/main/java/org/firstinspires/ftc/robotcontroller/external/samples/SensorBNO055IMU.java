@@ -62,19 +62,19 @@ public class SensorBNO055IMU extends LinearOpMode
     // State
     //----------------------------------------------------------------------------------------------
 
+        BNO055IMU imu;
+
+        // State used for updating telemetry
+        Orientation angles;
+        Acceleration gravity;
+
+        //----------------------------------------------------------------------------------------------
+        // Main logic
+        //----------------------------------------------------------------------------------------------
+
+        @Override public void runOpMode() {
+
     // The IMU sensor object
-    BNO055IMU imu;
-
-    // State used for updating telemetry
-    Orientation angles;
-    Acceleration gravity;
-
-    //----------------------------------------------------------------------------------------------
-    // Main logic
-    //----------------------------------------------------------------------------------------------
-
-    @Override public void runOpMode() {
-
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
         // provide positional information.
