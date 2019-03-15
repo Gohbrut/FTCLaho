@@ -2,19 +2,22 @@ package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.controls.Controls;
-import org.firstinspires.ftc.teamcode.utils.Color;
+import org.firstinspires.ftc.teamcode.utils.Defines;
+import org.firstinspires.ftc.teamcode.utils.Song;
+import org.firstinspires.ftc.teamcode.utils.Utils;
 
 @TeleOp(name = "Manualcop")
 public class Tele extends LinearOpMode
 {
     private Controls controls;
+    private Song song;
 
     private void setup()
     {
+        Utils.init(hardwareMap);
+        song = new Song(hardwareMap.appContext, R.raw.derp4);
         controls = new Controls(hardwareMap);
         telemetry.addData("Status", "Initialised");
         telemetry.update();
@@ -28,13 +31,29 @@ public class Tele extends LinearOpMode
         //telemetry.addData("Yellow: ", controls.getColor().isYellow());
         //telemetry.addData("Servo left: ", controls.getCollectorControls().servoLeft.getPosition());
         //telemetry.addData("Servo right: ", controls.getCollectorControls().servoRight.getPosition());
-        telemetry.addData("Motor: ", controls.pickupControls.motorMove);
+        String loc = "default";
+        int l = Utils.getGoldLocation();
+        if(l == Defines.MINERAL_LOCATION_CENTER)
+            loc = "center";
+        else if(l == Defines.MINERAL_LOCATION_LEFT)
+            loc = "left";
+        else if(l == Defines.MINERAL_LOCATION_RIGHT)
+            loc = "right";
+        telemetry.addData("Location: ", loc);
         telemetry.update();
     }
 
     private void controlJoystick()
     {
         controls.move(-gamepad1.left_stick_x, gamepad1.left_stick_y);
+    }
+
+    private void derp()
+    {
+        if(gamepad1.x)
+            song.play();
+        else if(gamepad1.y)
+            song.stop();
     }
 
     private void controlGamepad1()
@@ -211,10 +230,12 @@ public class Tele extends LinearOpMode
         controls.resetEngine();
         while(opModeIsActive())
         {
+            derp();
             controls.resetEngine();
             controlGamepad1();
             controlGamepad2();
             debug();
         }
+        Utils.deinnit();
     }
 }

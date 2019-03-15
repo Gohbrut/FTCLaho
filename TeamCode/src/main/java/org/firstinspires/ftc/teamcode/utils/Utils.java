@@ -90,12 +90,14 @@ public class Utils
         //tell relative position of cube and return it
         if(gold1 < silver1 && gold1 < white1)
             return Defines.MINERAL_LOCATION_LEFT;
+            //return Defines.MINERAL_LOCATION_RIGHT;
         else if(gold1 > silver1 && gold1 < white1)
             return Defines.MINERAL_LOCATION_CENTER;
         else if(gold1 > white1 && gold1 < silver1)
             return Defines.MINERAL_LOCATION_CENTER;
         else if(gold1 > silver1 && gold1 > white1)
             return Defines.MINERAL_LOCATION_RIGHT;
+            //return Defines.MINERAL_LOCATION_LEFT;
 
         return -1;
     }
